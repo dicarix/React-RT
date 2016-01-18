@@ -14,3 +14,9 @@
 <li>Routing with React-Router</li>
 
 </ul>
+
+how to run ?
+
+$ npm install 
+
+$ node run
