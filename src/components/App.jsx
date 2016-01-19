@@ -1,23 +1,41 @@
 import React from 'react';
+import MessageList from './MessageList.jsx';
+import mui from 'material-ui';
 
-class App extends React.Component{
-    constructor(){
+var ThemeManager = new mui.Styles.ThemeManager();
+var Colors = mui.Styles.Colors;
+var AppBar = mui.AppBar;
+class App extends React.Component {
+    constructor() {
         super();
-        this.state={
-            messages:[
-                'hi there how are you?',
-                'I am fine and you?'
-            ]
+
+        ThemeManager.setPalette({
+            primary1Color: Colors.blue500,
+            primary2Color: Colors.blue700,
+            primary3Color: Colors.blue100,
+            accent1Color: Colors.pink400
+        })
+
+    }
+
+    static childContextTypes = {
+        muiTheme: React.PropTypes.object
+    }
+
+    getChildContext() {
+        return {
+            muiTheme: ThemeManager.getCurrentTheme()
         };
     }
-    render(){
-        var messageNode=this.state.messages.map((messages)=>{
-            return(
-                <div >{messages}</div>
-            );
-        });
-        return(
-            <div>{messageNode}</div>
+
+    render() {
+        return (
+            <div>
+                <AppBar title="Awesome Chat App"/>
+                <MessageList/>
+            </div>
+
+
         )
     }
 }
