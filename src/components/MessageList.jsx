@@ -3,40 +3,53 @@ import Message from './Message.jsx';
 import mui from 'material-ui';
 import Firebase from 'firebase';
 import _ from 'lodash';
+import connectToStores from 'alt/utils/connectToStores';
+import ChatStore from '../stores/ChatStore';
+var {Card,List,CircularProgress}=mui;
 
-var {Card,List}=mui;
-class MessageList extends React.Component{
-    constructor(props){
+@connectToStores
+class MessageList extends React.Component {
+    constructor(props) {
         super(props);
-        this.state={
-            messages:[]
-        };
-        this.firebaseRef = new Firebase('https://react-stack-dicarix.firebaseio.com/messages');
-        this.firebaseRef.on("child_added",(msg)=>{
-            if(this.state.messages[msg.key]){
-                return;
-            }
-            let msgVal=msg.val();
-            msgVal.key=msg.key();
-            this.state.messages[msgVal.key]=msgVal;
-            this.setState({messages:this.state.messages});
-        });
-        this.firebaseRef.on('child_removed',(msg)=>{
-            let key = msg.key();
-            delete this.state.messages[key];
-            this.setState({messages:this.state.messages});
-        })
+        this.state = {
+            messages: {}
+        }
     }
-    render(){
-        var messageNode=_.values(this.state.messages).map((message)=>{
-            return(
-                <Message message={message.message} avatar={message.profilePic}/>
-            );
-        });
-        return(
+
+    static getStores() {
+        return [ChatStore];
+    }
+
+    static getPropsFromStores() {
+        return ChatStore.getState();
+    }
+
+    render() {
+
+        let messageNodes = null;
+
+        if (!this.props.messagesLoading) {
+            messageNodes = _.values(this.props.messages).map((message)=> {
+                return (
+                    <Message message={message.message} avatar={message.profilePic}/>
+                );
+            });
+        } else {
+            messageNodes = <CircularProgress
+                mode="indeterminate"
+                style={{
+                        paddingTop:'20px',
+                        paddingBottom:'20px',
+                        margin:'0 auto',
+                        display:'block',
+                        width:'60px'
+                        }}/>
+        }
+
+        return (
             <Card style={{flexGrow:2,marginLeft:30}}>
                 <List>
-                    {messageNode}
+                    {messageNodes}
                 </List>
             </Card>
         )
