@@ -9,13 +9,25 @@ var {Card,List,CircularProgress}=mui;
 class ChannelList extends React.Component {
     constructor(props) {
         super(props);
-        ChatStore.getChannels();
+
         //this.state = {
         //    channels: [
         //        'Dogs',
         //        'Cats'
         //    ]
         //};
+    }
+
+    componentDidMount() {
+        this.selectedChannel = this.props.params.channel;
+        ChatStore.getChannels(this.selectedChannel);
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(this.selectedChannel != nextProps.params.channel){
+            this.selectedChannel= nextProps.params.channel;
+            ChatStore.getChannels(this.selectedChannel);
+        }
     }
 
     static getStores() {
